@@ -265,16 +265,20 @@ impl UniswapV3Pool {
                 ParamType::Int(256),  //amount1
                 ParamType::Uint(160), //sqrtPriceX96
                 ParamType::Uint(128), //liquidity
+                // FIXME: may be should fix
+                // ParamType::Int(256)
+                // and then change the tick decode below
                 ParamType::Int(24),
             ],
             &swap_log.data,
         )
         .expect("Could not get log data");
 
-        let amount_0 = I256::from_raw(log_data[1].to_owned().into_int().unwrap());
+        let amount_0 = I256::from_raw(log_data[0].to_owned().into_int().unwrap());
         let amount_1 = I256::from_raw(log_data[1].to_owned().into_int().unwrap());
         let sqrt_price = log_data[2].to_owned().into_uint().unwrap();
         let liquidity = log_data[3].to_owned().into_uint().unwrap().as_u128();
+        // let tick = I256::from_raw(log_data[4].to_owned().into_int().unwrap());
         let tick = log_data[4].to_owned().into_uint().unwrap().as_u32() as i32;
 
         (amount_0, amount_1, sqrt_price, liquidity, tick)
